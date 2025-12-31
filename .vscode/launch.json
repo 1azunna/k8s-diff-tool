@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "auto",
-            "program": "${workspaceFolder}/cmd/kdiff/main.go",
+            "program": "${workspaceFolder}/main.go",
             "args": "-d ${workspaceFolder}/test/dir_a ${workspaceFolder}/test/dir_b"
         }
     ]

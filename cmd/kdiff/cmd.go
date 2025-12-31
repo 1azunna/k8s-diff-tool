@@ -1,8 +1,7 @@
-package main
+package kdiff
 
 import (
 	"fmt"
-	"os"
 	"path/filepath"
 
 	"github.com/1azunna/k8s-diff-tool/internal/differ"
@@ -15,13 +14,6 @@ type cliOptions struct {
 	secureMode   bool
 	includeKinds []string
 	excludeKinds []string
-}
-
-func main() {
-	if err := NewRootCmd().Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
 }
 
 // NewRootCmd creates the root command and encapsulates its flag state.

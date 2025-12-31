@@ -38,7 +38,7 @@ To build a tool superior to generic text diffs for Kubernetes. It should semanti
 
 ## Project Status
 - [x] Initialize the project with `go mod`.
-- [x] Set up the directory structure (`cmd/`, `internal/`).
+- [x] Set up the directory structure (`internal/`, `cmd/`, `main.go`).
 - [x] Create the main entry point with Cobra.
 - [x] Implement YAML loader with support for multi-document files.
 - [x] Implement semantic diffing engine using `google/go-cmp`.

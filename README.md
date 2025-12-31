@@ -19,7 +19,7 @@
 ```bash
 git clone https://github.com/1azunna/k8s-diff-tool.git
 cd k8s-diff-tool
-go build -o bin/kdiff ./cmd/kdiff
+go build -o bin/kdiff .
 ```
 
 To make `kdiff` accessible globally, add the `bin` directory to your PATH:

@@ -17,11 +17,12 @@ This document outlines the operational guidelines, coding standards, and best pr
 
 ### 2. Project Structure
 We follow a modular Go layout:
-- `/cmd/kdiff`: Main entry point for the `kdiff` CLI.
+- `main.go`: Application entrypoint (root).
+- `/cmd/kdiff`: CLI command definitions and flags.
 - `/internal/loader`: Logic for loading and parsing YAML files.
 - `/internal/differ`: Core diffing, filtering, and masking engine.
 - `/test`: Test data and fixtures for local comparison testing.
-- `/bin`: Local directory for compiled binaries (ignored by git, added to PATH).
+- `/bin`: Local directory for compiled binaries (ignored by git).
 
 ### 3. Error Handling
 - **Wrap Errors**: Use `fmt.Errorf("...: %w", err)` to provide context when returning errors.
