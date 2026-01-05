@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"path/filepath"
+	"sort"
 
 	"github.com/1azunna/k8s-diff-tool/internal/differ"
 	"github.com/1azunna/k8s-diff-tool/internal/loader"
@@ -108,38 +109,54 @@ func runDirDiff(dirA, dirB string, opts differ.Options) error {
 		return err
 	}
 
-	// Create a map for quick lookup of files in B
+	// Create a union of all filenames
+	allFilesMap := make(map[string]bool)
+	mapA := make(map[string]bool)
+	for _, f := range filesA {
+		allFilesMap[f] = true
+		mapA[f] = true
+	}
 	mapB := make(map[string]bool)
 	for _, f := range filesB {
+		allFilesMap[f] = true
 		mapB[f] = true
 	}
 
-	// Intersection: Iterate over A and check if present in B
-	for _, filename := range filesA {
-		if _, exists := mapB[filename]; exists {
-			fullPathA := filepath.Join(dirA, filename)
-			fullPathB := filepath.Join(dirB, filename)
+	var allFiles []string
+	for f := range allFilesMap {
+		allFiles = append(allFiles, f)
+	}
+	sort.Strings(allFiles)
 
-			dataA, err := loader.LoadFile(fullPathA)
+	for _, filename := range allFiles {
+		var dataA, dataB []byte
+
+		if mapA[filename] {
+			fullPathA := filepath.Join(dirA, filename)
+			dataA, err = loader.LoadFile(fullPathA)
 			if err != nil {
 				return fmt.Errorf("error reading %s: %w", fullPathA, err)
 			}
-			dataB, err := loader.LoadFile(fullPathB)
+		}
+
+		if mapB[filename] {
+			fullPathB := filepath.Join(dirB, filename)
+			dataB, err = loader.LoadFile(fullPathB)
 			if err != nil {
 				return fmt.Errorf("error reading %s: %w", fullPathB, err)
 			}
-
-			diff, err := differ.Diff(dataA, dataB, opts)
-			if err != nil {
-				return fmt.Errorf("error diffing %s: %w", filename, err)
-			}
-
-			// Requirement: Header should be the filename before diff is displayed
-			fmt.Printf("Diff for %s:\n", filename)
-			fmt.Println(diff)
-			// Add a separator for readability between files
-			fmt.Println("--------------------------------------------------")
 		}
+
+		diff, err := differ.Diff(dataA, dataB, opts)
+		if err != nil {
+			return fmt.Errorf("error diffing %s: %w", filename, err)
+		}
+
+		// Requirement: Header should be the filename before diff is displayed
+		fmt.Printf("Diff for %s:\n", filename)
+		fmt.Println(diff)
+		// Add a separator for readability between files
+		fmt.Println("--------------------------------------------------")
 	}
 
 	return nil
