@@ -1,0 +1,53 @@
+name: "Kubernetes Diff Tool"
+description: "Semantically compare Kubernetes manifests and directories"
+author: "1azunna"
+inputs:
+  base_path:
+    description: "First file or directory path to compare"
+    required: true
+  head_path:
+    description: "Second file or directory path to compare"
+    required: true
+  directory:
+    description: "Enable directory comparison mode (-d)"
+    required: false
+    default: "false"
+  secure_mode:
+    description: "Enable secure mode to mask secrets (-s)"
+    required: false
+    default: "false"
+  include:
+    description: 'Comma-separated list of Kinds to include (e.g., "Deployment,Service")'
+    required: false
+  exclude:
+    description: "Comma-separated list of Kinds to exclude"
+    required: false
+outputs:
+  diff:
+    description: "The captured diff output"
+    value: ${{ steps.run-kdiff.outputs.diff }}
+runs:
+  using: "composite"
+  steps:
+    - name: Build kdiff
+      shell: bash
+      run: |
+        echo "Building kdiff..."
+        cd $GITHUB_ACTION_PATH
+        go build -o bin/kdiff ./cmd/kdiff
+
+    - name: Run kdiff
+      id: run-kdiff
+      shell: bash
+      run: $GITHUB_ACTION_PATH/entrypoint.sh
+      env:
+        GITHUB_ACTION_PATH: ${{ github.action_path }}
+        INPUT_BASE_PATH: ${{ inputs.base_path }}
+        INPUT_HEAD_PATH: ${{ inputs.head_path }}
+        INPUT_DIRECTORY: ${{ inputs.directory }}
+        INPUT_SECURE_MODE: ${{ inputs.secure_mode }}
+        INPUT_INCLUDE: ${{ inputs.include }}
+        INPUT_EXCLUDE: ${{ inputs.exclude }}
+branding:
+  icon: "maximize"
+  color: "blue"
