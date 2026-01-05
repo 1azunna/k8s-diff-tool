@@ -15,11 +15,18 @@
 ### Prerequisites
 - [Go](https://golang.org/doc/install) 1.21+ (recommended)
 
+### Install with Go
+You can install the tool directly using `go install`:
+```bash
+go install github.com/1azunna/k8s-diff-tool/cmd/kdiff@latest
+```
+This will install the `kdiff` binary to your `$GOPATH/bin` directory.
+
 ### Build from source
 ```bash
 git clone https://github.com/1azunna/k8s-diff-tool.git
 cd k8s-diff-tool
-go build -o bin/kdiff .
+go build -o bin/kdiff ./cmd/kdiff
 ```
 
 To make `kdiff` accessible globally, add the `bin` directory to your PATH:

@@ -1,4 +1,4 @@
-package kdiff
+package main
 
 import (
 	"fmt"
@@ -16,8 +16,8 @@ type cliOptions struct {
 	excludeKinds []string
 }
 
-// NewRootCmd creates the root command and encapsulates its flag state.
-func NewRootCmd() *cobra.Command {
+// Entrypoint creates the root command and encapsulates its flag state.
+func Entrypoint() *cobra.Command {
 	opts := &cliOptions{}
 
 	cmd := &cobra.Command{
