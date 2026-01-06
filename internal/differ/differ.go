@@ -51,7 +51,7 @@ func Diff(fileA, fileB []byte, opts Options) (string, error) {
 	// Note: We masked the data IN PLACE in the map structures for SecureMode.
 	// So we can proceed to diff normally. The "Same Length Hash Suffix" strategy
 	// ensures changes are detected by the diff engine.
-	
+
 	yamlA, err := marshalDocs(docsA)
 	if err != nil {
 		return "", fmt.Errorf("failed to normalize first file: %w", err)
@@ -73,7 +73,7 @@ func Diff(fileA, fileB []byte, opts Options) (string, error) {
 
 	text, _ := difflib.GetUnifiedDiffString(diff)
 	if text == "" {
-		return "Files are identical", nil
+		return "# Files are identical", nil
 	}
 
 	// Colorize

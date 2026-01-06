@@ -153,10 +153,10 @@ func runDirDiff(dirA, dirB string, opts differ.Options) error {
 		}
 
 		// Requirement: Header should be the filename before diff is displayed
-		fmt.Printf("Diff for %s:\n", filename)
+		fmt.Printf("# Diff for %s:\n", filename)
 		fmt.Println(diff)
 		// Add a separator for readability between files
-		fmt.Println("--------------------------------------------------")
+		fmt.Println("# --------------------------------------------------")
 	}
 
 	return nil
