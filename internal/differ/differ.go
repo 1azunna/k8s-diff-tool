@@ -73,7 +73,7 @@ func Diff(fileA, fileB []byte, opts Options) (string, error) {
 
 	text, _ := difflib.GetUnifiedDiffString(diff)
 	if text == "" {
-		return "# Files are identical", nil
+		return "# No Changes", nil
 	}
 
 	// Colorize
