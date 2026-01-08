@@ -70,6 +70,72 @@ kdiff -d -s test/dir_a test/dir_b
 kdiff -d -i Service test/dir_a test/dir_b
 ```
 
+## GitHub Action
+
+You can use `k8s-diff-tool` as a GitHub Action in your CI/CD workflows to automatically compare Kubernetes manifests.
+
+### Inputs
+
+| Input | Description | Default | Required |
+|-------|-------------|---------|----------|
+| `base_path` | Base file or directory path to compare | | No |
+| `head_path` | Head file or directory path to compare | | No |
+| `directory` | Enable directory comparison mode | `"false"` | No |
+| `secure_mode` | Enable secure mode to mask secrets | `"false"` | No |
+| `cluster_mode` | Enable cluster comparison mode | `"false"` | No |
+| `kube_context` | Kubernetes context to use (for cluster mode) | | No |
+| `include` | Comma-separated list of Kinds to include | | No |
+| `exclude` | Comma-separated list of Kinds to exclude | | No |
+
+### Outputs
+
+| Output | Description |
+|--------|-------------|
+| `diff` | The captured diff output string |
+
+### Example Usage
+
+```yaml
+name: K8s Diff Check
+on: [pull_request]
+
+jobs:
+  kdiff:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: head-branch
+      - uses: actions/checkout@v4
+        with:
+          ref: master
+          path: base-branch
+
+      - name: Compare manifests
+        id: diff-check
+        uses: 1azunna/k8s-diff-tool@main
+        with:
+          base_path: 'base-branch/deploy/overlays/prod'
+          head_path: 'head-branch/deploy/overlays/prod'
+          directory: 'true'
+          secure_mode: 'true'
+          
+      - name: Post diff as comment
+        uses: mshick/add-pr-comment@v2
+        with:
+          message: |
+            Diff Output:
+
+            <details><summary>Change details</summary>
+
+            ````````diff
+
+            ${{ steps.diff-check.outputs.diff }}
+
+            ````````
+            </details>
+```
+
 ## Development
 
 ### Running Tests
