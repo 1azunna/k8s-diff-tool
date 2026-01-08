@@ -1,33 +1,40 @@
-name: "Kubernetes Diff Tool"
-description: "Semantically compare Kubernetes manifests and directories"
-author: "1azunna"
+name: Kubernetes Diff Tool
+description: Semantically compare Kubernetes manifests and directories
+author: 1azunna
 inputs:
   base_path:
-    description: "First file or directory path to compare"
-    required: true
+    description: Base file or directory path to compare
+    required: false
   head_path:
-    description: "Second file or directory path to compare"
-    required: true
+    description: Head file or directory path to compare
+    required: false
   directory:
-    description: "Enable directory comparison mode (-d)"
+    description: Enable directory comparison mode
     required: false
     default: "false"
   secure_mode:
-    description: "Enable secure mode to mask secrets (-s)"
+    description: Enable secure mode to mask secrets
     required: false
     default: "false"
+  cluster_mode:
+    description: Enable cluster comparison mode
+    required: false
+    default: "false"
+  kube_context:
+    description: Kubernetes context to use
+    required: false
   include:
-    description: 'Comma-separated list of Kinds to include (e.g., "Deployment,Service")'
+    description: Comma-separated list of Kinds to include (e.g., "Deployment,Service")
     required: false
   exclude:
-    description: "Comma-separated list of Kinds to exclude"
+    description: Comma-separated list of Kinds to exclude
     required: false
 outputs:
   diff:
-    description: "The captured diff output"
+    description: The captured diff output
     value: ${{ steps.run-kdiff.outputs.diff }}
 runs:
-  using: "composite"
+  using: composite
   steps:
     - name: Build kdiff
       shell: bash
@@ -35,7 +42,6 @@ runs:
         echo "Building kdiff..."
         cd $GITHUB_ACTION_PATH
         go build -o bin/kdiff ./cmd/kdiff
-
     - name: Run kdiff
       id: run-kdiff
       shell: bash
@@ -46,8 +52,10 @@ runs:
         INPUT_HEAD_PATH: ${{ inputs.head_path }}
         INPUT_DIRECTORY: ${{ inputs.directory }}
         INPUT_SECURE_MODE: ${{ inputs.secure_mode }}
+        INPUT_CLUSTER_MODE: ${{ inputs.cluster_mode }}
+        INPUT_KUBE_CONTEXT: ${{ inputs.kube_context }}
         INPUT_INCLUDE: ${{ inputs.include }}
         INPUT_EXCLUDE: ${{ inputs.exclude }}
 branding:
-  icon: "maximize"
-  color: "blue"
+  icon: maximize
+  color: blue

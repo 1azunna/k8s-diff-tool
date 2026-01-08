@@ -21,13 +21,29 @@ if [ -n "$INPUT_EXCLUDE" ]; then
   ARGS="$ARGS -e $INPUT_EXCLUDE"
 fi
 
-# Add positional arguments (Paths)
-if [ -z "$INPUT_BASE_PATH" ] || [ -z "$INPUT_HEAD_PATH" ]; then
-  echo "Error: base_path and head_path are required."
-  exit 1
+if [ "$INPUT_CLUSTER_MODE" = "true" ]; then
+  ARGS="$ARGS -c"
+  if [ -n "$INPUT_KUBE_CONTEXT" ]; then
+    ARGS="$ARGS --kube-context $INPUT_KUBE_CONTEXT"
+  fi
+  
+  # For cluster mode, we need exactly one path (the local one).
+  # We try HEAD_PATH first, then BASE_PATH.
+  TARGET_PATH="${INPUT_HEAD_PATH:-$INPUT_BASE_PATH}"
+  
+  if [ -z "$TARGET_PATH" ]; then
+    echo "Error: head_path (or base_path) is required for cluster mode."
+    exit 1
+  fi
+  ARGS="$ARGS $TARGET_PATH"
+else
+  # Add positional arguments (Paths) for normal mode
+  if [ -z "$INPUT_BASE_PATH" ] || [ -z "$INPUT_HEAD_PATH" ]; then
+    echo "Error: base_path and head_path are required."
+    exit 1
+  fi
+  ARGS="$ARGS $INPUT_BASE_PATH $INPUT_HEAD_PATH"
 fi
-
-ARGS="$ARGS $INPUT_BASE_PATH $INPUT_HEAD_PATH"
 
 echo "Running: kdiff $ARGS"
 # Execute the tool
