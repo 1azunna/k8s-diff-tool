@@ -43,6 +43,8 @@ kdiff [path1] [path2] [flags]
 ### Flags
 - `-d, --dir`: Compare all matching YAML files in two directories.
 - `-s, --secure`: Mask sensitive data in `Secrets` and `ConfigMaps`.
+- `-c, --cluster-mode`: Compare local files with live cluster resources.
+- `--kube-context`: Specify the Kubernetes context to use (only for --cluster-mode).
 - `-i, --include`: Only include specific resource Kinds (e.g., `-i Deployment,Service`).
 - `-e, --exclude`: Exclude specific resource Kinds (e.g., `-e Namespace`).
 
@@ -51,6 +53,11 @@ kdiff [path1] [path2] [flags]
 #### Compare two files
 ```bash
 kdiff production/app.yaml staging/app.yaml
+```
+
+#### Compare local file with live cluster
+```bash
+kdiff production/app.yaml --cluster-mode
 ```
 
 #### Compare two directories with secure masking
