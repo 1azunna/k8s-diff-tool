@@ -1,0 +1,59 @@
+name: Release Binaries
+
+on:
+  release:
+    types: [created]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            goos: linux
+            goarch: amd64
+            output: kdiff-linux-amd64
+          - os: ubuntu-latest
+            goos: linux
+            goarch: arm64
+            output: kdiff-linux-arm64
+          - os: macos-latest
+            goos: darwin
+            goarch: amd64
+            output: kdiff-darwin-amd64
+          - os: macos-latest
+            goos: darwin
+            goarch: arm64
+            output: kdiff-darwin-arm64
+          - os: windows-latest
+            goos: windows
+            goarch: amd64
+            output: kdiff-windows-amd64.exe
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.25'
+
+      - name: Build binary
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: 0
+        run: |
+          go build -o ${{ matrix.output }} -ldflags="-s -w" ./cmd/kdiff
+
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ matrix.output }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
